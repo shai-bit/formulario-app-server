@@ -54,6 +54,12 @@ def login():
     # Si el método no es POST (es decir, el usuario está solicitando la página de inicio de sesión), simplemente muestra la página de inicio de sesión
     return redirect(url_for('index'))
 
+@app.route('/submit-registration', methods=['POST'])
+def submit_registration():
+    # Por ahora, solo redirige al usuario a la página de inicio, sin manejar los datos del formulario.
+    return redirect(url_for('index'))
+
+
 
 if __name__ == '__main__':
     app.run(debug=True, host='0.0.0.0', port=5000)
