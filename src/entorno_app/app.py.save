@@ -1,0 +1,40 @@
+from flask import Flask, render_template, request, redirect, url_for, flash
+from flask_sqlalchemy import SQLAlchemy
+
+app = Flask(__name__)
+app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:boguetos@10.0.0.4/usuarios'
+app.config['SECRET_KEY'] = '2002'
+db = SQLAlchemy(app)
+
+class Usuario(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    nombre_usuario = db.Column(db.String(80), unique=True, nullable=False)
+    contraseña = db.Column(db.String(120), nullable=False)
+
+
+@app.route('/login', methods=['GET', 'POST'])
+def login():
+    if request.method == 'POST':
+        usuario = request.form['nombre_usuario']
+        contraseña = request.form['contraseña']
+        
+        user = Usuario.query.filter_by(nombre_usuario=usuario).first()
+        
+        if user and user.contraseña == contraseña:
+            # Inicio de sesión exitoso
+            flash('Inicio de sesión exitoso!')
+            return redirect(url_for('pagina_principal'))
+        else:
+            flash('Usuario o contraseña incorrectos')
+            return redirect(url_for('login'))
+    return render_template('login.html')
+
+@app.route('/pagina_principal')
+def pagina_principal():
+    return "¡Bienvenido a la página principal!"
+
+
+
+if __name__ == '__main__':
+    app.run(debug=True, host='0.0.0.0', port=5000)
+
